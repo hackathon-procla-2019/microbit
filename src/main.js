@@ -2,6 +2,7 @@
 // PC とmicro:bit をBluetooth で接続
 // mb0 から受信した番号に対応したサウンドを鳴らす
 const drumArray = [
+  "",
   "bass.mp3",
   "snare.mp3",
   "hihat.mp3",
@@ -14,47 +15,15 @@ const drumArray = [
 
 const soundPlay = (input) => {
   const number = Number(input);
-  switch (true) {
-    case isNaN(number):
-      break;
-    case number < 3:
-      break;
-    case number < 8 && 3 <= number:
-      new Audio("sound/" + drumArray[0]).play();
-      break;
-    case number < 13:
-      new Audio("sound/" + drumArray[1]).play();
-      break;
-    case number < 18:
-      new Audio("sound/" + drumArray[2]).play();
-      break;
-    case number < 23:
-      new Audio("sound/" + drumArray[3]).play();
-      break;
-    case number < 28:
-      new Audio("sound/" + drumArray[4]).play();
-      break;
-    case number < 33:
-      new Audio("sound/" + drumArray[5]).play();
-      break;
-    case number < 38:
-      new Audio("sound/" + drumArray[6]).play();
-      break;
-    case number < 43:
-      new Audio("sound/" + drumArray[7]).play();
-      break;
-    default:
-      break;
-  }
+  new Audio("sound/" + drumArray[number]).play();
 };
-
 const UUID_UART_SERVICE = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
 const UUID_TX_CHAR_CHARACTERISTIC = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 let myCharacteristics;
 
 async function onStartButtonClick() {
   try {
-    console.log("Requesting Bluetooth Device...");
+    console.log("Bluetoothデバイス取得");
     const device = await navigator.bluetooth.requestDevice({
       filters: [
         { services: [UUID_UART_SERVICE] },
@@ -62,16 +31,16 @@ async function onStartButtonClick() {
       ],
     });
 
-    console.log("Connecting to GATT Server...");
+    console.log("GATTサーバーに接続");
     const server = await device.gatt.connect();
-    console.log("Getting Service...");
+    console.log("サービスの取得");
     const service = await server.getPrimaryService(UUID_UART_SERVICE);
-    console.log("Getting Characteristic...");
+    console.log("CHARACTERISTIC取得");
     myCharacteristics = await service.getCharacteristic(
       UUID_TX_CHAR_CHARACTERISTIC
     );
     myCharacteristics.startNotifications();
-    console.log("> Notifications started");
+    console.log("通信開始");
     myCharacteristics.addEventListener(
       "characteristicvaluechanged",
       handleNotifications

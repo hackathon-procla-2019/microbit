@@ -7,11 +7,15 @@ bluetooth.onBluetoothDisconnected(function () {
 input.onButtonPressed(Button.A, function () {
   if (num > 1) {
     num += -1;
+  } else {
+    num = 8;
   }
 });
 input.onButtonPressed(Button.B, function () {
   if (num < 8) {
     num += 1;
+  } else {
+    num = 1;
   }
 });
 let num = 0;
@@ -24,11 +28,7 @@ basic.forever(function () {
   // Z方向の加速度を取得して、ドラムを鳴らすかの判定を行う
   if (input.acceleration(Dimension.Z) < -150 && soundFlag == true) {
     soundFlag = false;
-    music.play(
-      music.tonePlayable(262, music.beat(BeatFraction.Sixteenth)),
-      music.PlaybackMode.UntilDone
-    );
-    bluetooth.uartWriteNumber(num * 5);
+    bluetooth.uartWriteNumber(num);
   } else if (input.acceleration(Dimension.Z) >= -25) {
     soundFlag = true;
   }
